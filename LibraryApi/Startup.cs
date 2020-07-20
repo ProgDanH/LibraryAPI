@@ -38,7 +38,6 @@ namespace LibraryApi
             services.AddTransient<ISystemTime, SystemTime>();
 
             services.AddDbContext<LibraryDataContext>(options =>
-
                 options.UseSqlServer(Configuration.GetConnectionString("LibraryDatabase"))
             ) ;
 
