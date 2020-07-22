@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -17,22 +19,23 @@ namespace LibraryApiIntegrationTests
         [Fact]
         public async Task CorrectStatusCode()
         {
-            var resp = await _client.GetAsync("/status");
+            var response = await _client.GetAsync("/status");
 
-            Assert.True(resp.IsSuccessStatusCode);
-            Assert.Equal(HttpStatusCode.OK, resp.StatusCode);
+            Assert.True(response.IsSuccessStatusCode); // anything from 200-299
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
         [Fact]
         public async Task HasCorrectRepresentation()
         {
-            var resp = await _client.GetAsync("/status");
-            var content = await resp.Content.ReadAsAsync<GetStatusResponse>();
+            var response = await _client.GetAsync("/status");
+            var content = await response.Content.ReadAsAsync<GetStatusResponse>();
 
             Assert.Equal("Everything is golden!", content.message);
             Assert.Equal("Joe Schmidtly", content.checkedBy);
             Assert.Equal(new DateTime(1969, 4, 20, 23, 59, 59), content.whenLastChecked);
         }
     }
+
 
     public class GetStatusResponse
     {

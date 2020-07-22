@@ -8,41 +8,51 @@ using Xunit;
 
 namespace LibraryApiIntegrationTests.Books
 {
-    class GettingAllBooks : IClassFixture<WebTestFixture>
+    public class GettingAllBooks : IClassFixture<WebTestFixture>
     {
+
         private HttpClient _client;
+
         public GettingAllBooks(WebTestFixture factory)
         {
             _client = factory.CreateClient();
         }
+
+        [Fact]
         public async Task CorrectStatusCode()
         {
-            var resp = await _client.GetAsync("/books");
-            Assert.Equal(HttpStatusCode.OK, resp.StatusCode);
-        }
-        public async Task UseCorrectMediaType()
-        {
-            var resp = await _client.GetAsync("/books");
-            Assert.Equal("application/json", resp.Content.Headers.ContentType.MediaType);
+            var response = await _client.GetAsync("/books");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
+        [Fact]
+        public async Task UsesCorrectMediaType()
+        {
+            var response = await _client.GetAsync("/books");
+            Assert.Equal("application/json", response.Content.Headers.ContentType.MediaType);
+
+        }
+
+        [Fact]
         public async Task HasCorrectDataRepresentation()
         {
-            var resp = await _client.GetAsync("/books");
-            var content = await resp.Content.ReadAsAsync<GetBooksResponse>();
+            var response = await _client.GetAsync("/books");
+            var content = await response.Content.ReadAsAsync<GetBooksResponse>();
+
             Assert.Equal(2, content.numberOfBooks);
             Assert.Null(content.genreFilter);
         }
     }
 
+
     public class GetBooksResponse
     {
-        public Book[] books { get; set; }
+        public BookItem[] books { get; set; }
         public string genreFilter { get; set; }
         public int numberOfBooks { get; set; }
     }
 
-    public class Book
+    public class BookItem
     {
         public int id { get; set; }
         public string title { get; set; }
@@ -52,4 +62,3 @@ namespace LibraryApiIntegrationTests.Books
     }
 
 }
-
