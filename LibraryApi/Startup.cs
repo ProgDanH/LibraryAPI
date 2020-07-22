@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AutoMapper;
+using LibraryApi.Controllers;
 using LibraryApi.Domain;
 using LibraryApi.Profiles;
 using LibraryApi.Services;
@@ -17,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using RabbitMqUtils;
 
 namespace LibraryApi
 {
@@ -63,6 +65,8 @@ namespace LibraryApi
                options.Configuration = Configuration.GetValue<string>("redisHost");
            });
 
+            services.AddRabbit(Configuration);
+            services.AddTransient<IWriteToMessageQueue, RabbitMQReservationProcessor>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo()

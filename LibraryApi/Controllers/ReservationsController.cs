@@ -15,11 +15,13 @@ namespace LibraryApi.Controllers
 
         LibraryDataContext Context;
         ISystemTime Clock;
+        IWriteToMessageQueue Rabbit;
 
-        public ReservationsController(LibraryDataContext context, ISystemTime clock)
+        public ReservationsController(LibraryDataContext context, ISystemTime clock, IWriteToMessageQueue rabbit)
         {
             Context = context;
             Clock = clock;
+            Rabbit = rabbit;
         }
 
         // POST /reservations - create a reservation
@@ -40,6 +42,7 @@ namespace LibraryApi.Controllers
             };
             Context.Reservations.Add(reservation);
             await Context.SaveChangesAsync();
+            await Rabbit.Write(reservation);
             return CreatedAtRoute("get#reservation", new { Id = reservation.Id }, reservation);
         }
 
